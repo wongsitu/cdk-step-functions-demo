@@ -43,4 +43,7 @@ def handler(event, context):
         ExpiresIn=3600
     )
     
-    return presigned_url
+    return {
+        "s3_key": s3_key,
+        "presigned_url": presigned_url
+    }

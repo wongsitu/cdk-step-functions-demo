@@ -43,7 +43,7 @@
       "Type": "Task",
       "Resource": "${GenerateExcelLambdaArn}",
       "Parameters": {
-        "urls.$": "$.results[*].presignedUrl"
+        "results.$": "$.results[*].presignedUrl"
       },
       "End": true
     },

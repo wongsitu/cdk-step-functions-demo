@@ -9,7 +9,7 @@ s3 = boto3.client('s3')
 bucket_name = os.environ['BUCKET_NAME']
 
 def handler(event, context):
-    urls = event['urls']
+    results = event['results']
     
     # Create a new workbook for the merged file
     merged_workbook = Workbook()
@@ -18,13 +18,14 @@ def handler(event, context):
     # List to track S3 object keys for deletion later
     s3_keys_to_delete = []
 
-    for url in urls:
+    for result in results:
+        url = result['presigned_url']
+        s3_key = result['s3_key']
         # Extract bucket name and key from the S3 URL
-        key = url.split(bucket_name + '/')[-1]
-        s3_keys_to_delete.append({'Key': key})
+        s3_keys_to_delete.append({'Key': s3_key})
         
         # Download the Excel file from S3
-        response = s3.get_object(Bucket=bucket_name, Key=key)
+        response = s3.get_object(Bucket=bucket_name, Key=s3_key)
         excel_data = BytesIO(response['Body'].read())
         
         # Load the downloaded Excel file
