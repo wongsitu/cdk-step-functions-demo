@@ -75,6 +75,10 @@ class CdkStepFunctionsDemoStack(Stack):
                                       assumed_by=iam.ServicePrincipal(
                                           "states.amazonaws.com"),
                                       )
+        submit_lambda.grant_invoke(state_machine_role)
+        process_entity.grant_invoke(state_machine_role)
+        generate_excel.grant_invoke(state_machine_role)
+        
         workflow = sfn.StateMachine(self, "StateMachine",
                                     definition_body=sfn.DefinitionBody.from_file(
                                         state_machine_dir),

@@ -17,6 +17,10 @@ def handler(event, context):
     workbook = Workbook()
     sheet = workbook.active
     sheet.title = entity
+    
+    headers = [column['header'] for column in columns]
+    keys = [column['key'] for column in columns]
+    sheet.append(headers)
 
     for _ in range(total_count):
         row = [getattr(fake, key)() for key in keys]
