@@ -4,6 +4,7 @@ import openpyxl
 from openpyxl import Workbook
 from io import BytesIO
 import os
+import uuid
 
 fake = Faker()
 s3 = boto3.client('s3')
@@ -30,9 +31,8 @@ def handler(event, context):
     workbook.save(file_stream)
     file_stream.seek(0)
     
-    random_hash = fake.sha256()
-
-    s3_key = f"{entity}-{random_hash}.xlsx"
+    file_uuid = uuid.uuid4()
+    s3_key = f"{file_uuid}.xlsx"
     
     s3.put_object(Bucket=bucket_name, Key=s3_key, Body=file_stream)
     

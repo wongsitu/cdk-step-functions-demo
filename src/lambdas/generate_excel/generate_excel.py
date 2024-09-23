@@ -3,6 +3,7 @@ import openpyxl
 from io import BytesIO
 from openpyxl import Workbook
 import os
+import uuid
 
 s3 = boto3.client('s3')
 bucket_name = os.environ['BUCKET_NAME']
@@ -44,10 +45,10 @@ def handler(event, context):
     merged_file.seek(0)
     
     # Define the key for the merged file
-    merged_file_key = fake.sha256()
+    file_uuid = uuid.uuid4()
 
     # Upload the merged file to S3
-    s3.put_object(Bucket=bucket_name, Key=merged_file_key, Body=merged_file)
+    s3.put_object(Bucket=bucket_name, Key=file_uuid, Body=merged_file)
     
     # Delete the original files from S3
     if s3_keys_to_delete:
@@ -56,7 +57,7 @@ def handler(event, context):
     # Generate a presigned URL for the merged file
     presigned_url = s3.generate_presigned_url(
         'get_object',
-        Params={'Bucket': bucket_name, 'Key': merged_file_key},
+        Params={'Bucket': bucket_name, 'Key': file_uuid},
         ExpiresIn=3600  # URL valid for 1 hour
     )
     

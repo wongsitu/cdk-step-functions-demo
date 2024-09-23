@@ -6,7 +6,8 @@ from aws_cdk import (
     BundlingOptions,
     aws_iam as iam,
     aws_s3 as s3,
-    RemovalPolicy
+    RemovalPolicy,
+    Duration
 )
 from constructs import Construct
 import os
@@ -41,6 +42,7 @@ class CdkStepFunctionsDemoStack(Stack):
                                          code=_lambda.Code.from_asset(submit_lambda_dir,
                                                                       bundling=bundling),
                                          handler='submit_lambda.handler',
+                                         timeout=Duration.seconds(900),
                                          )
 
         process_entity_dir = os.path.join(
@@ -52,7 +54,8 @@ class CdkStepFunctionsDemoStack(Stack):
                                           handler='process_entity.handler',
                                           environment={
                                               "BUCKET_NAME": demo_bucket.bucket_name
-                                          }
+                                          },
+                                          timeout=Duration.seconds(900),
                                           )
         demo_bucket.grant_read_write(process_entity)
 
@@ -65,7 +68,8 @@ class CdkStepFunctionsDemoStack(Stack):
                                           handler='generate_excel.handler',
                                           environment={
                                               "BUCKET_NAME": demo_bucket.bucket_name
-                                          }
+                                          },
+                                          timeout=Duration.seconds(900),
                                           )
         demo_bucket.grant_read_write(generate_excel)
 
