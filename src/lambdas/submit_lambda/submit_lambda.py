@@ -15,20 +15,12 @@ def handler(event, context):
                     "key": "name",
                 },
                 {
-                    "header": "Age",
-                    "key": "age",
-                },
-                {
-                    "header": "Sex",
-                    "key": "sex",
-                },
-                {
                     "header": "Address",
                     "key": "address",
                 },
                 {
-                    "header": "Phone",
-                    "key": "phone",
+                    "header": "Phone number",
+                    "key": "phone_number",
                 }
             ]
         },
@@ -41,20 +33,12 @@ def handler(event, context):
                     "key": "name",
                 },
                 {
-                    "header": "Description",
-                    "key": "description",
+                    "header": "Address",
+                    "key": "address",
                 },
                 {
-                    "header": "Date",
-                    "key": "date",
-                },
-                {
-                    "header": "Location",
-                    "key": "location",
-                },
-                {
-                    "header": "Status",
-                    "key": "status",
+                    "header": "Phone number",
+                    "key": "phone_number",
                 }
             ]
         }
