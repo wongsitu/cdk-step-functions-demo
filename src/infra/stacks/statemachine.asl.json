@@ -1,0 +1,56 @@
+{
+  "Comment": "A state machine that processes configurations and merges them into a single Excel file",
+  "StartAt": "Submit Lambda",
+  "States": {
+    "Submit Lambda": {
+      "Type": "Task",
+      "Comment": "Validates payload",
+      "Resource": "${SubmitLambdaArn}",
+      "Next": "Process Entities",
+      "Catch": [
+        {
+          "ErrorEquals": ["400"],
+          "Next": "FailState",
+          "Comment": "Error"
+        }
+      ]
+    },
+    "Process Entities": {
+      "Type": "Map",
+      "Comment": "For every entity, generate an excel file and upload it to S3",
+      "MaxConcurrency": 0,
+      "InputPath": "$",
+      "ItemsPath": "$.data",
+      "Iterator": {
+        "StartAt": "Process Entity",
+        "States": {
+          "Process Entity": {
+            "Type": "Task",
+            "Resource": "${ProcessEntityLambdaArn}",
+            "ResultPath": "$.presignedUrl",
+            "Next": "Complete"
+          },
+          "Complete": {
+            "Type": "Pass",
+            "End": true
+          }
+        }
+      },
+      "ResultPath": "$.results",
+      "Next": "Generate Excel"
+    },
+    "Generate Excel": {
+      "Type": "Task",
+      "Resource": "${GenerateExcelLambdaArn}",
+      "Parameters": {
+        "urls.$": "$.results[*].presignedUrl"
+      },
+      "End": true
+    },
+    "FailState": {
+      "Type": "Fail",
+      "Error": "Invalid Input Error",
+      "Cause": "Invalid input"
+    }
+  }
+}
