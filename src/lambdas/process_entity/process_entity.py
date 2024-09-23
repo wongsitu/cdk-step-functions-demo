@@ -29,8 +29,10 @@ def handler(event, context):
     file_stream = BytesIO()
     workbook.save(file_stream)
     file_stream.seek(0)
+    
+    random_hash = fake.sha256()
 
-    s3_key = f"{entity}.xlsx"
+    s3_key = f"{entity}-{random_hash}.xlsx"
     
     s3.put_object(Bucket=bucket_name, Key=s3_key, Body=file_stream)
     
@@ -41,6 +43,4 @@ def handler(event, context):
         ExpiresIn=3600
     )
     
-    return {
-        "presigned_url": presigned_url
-    }
+    return presigned_url
